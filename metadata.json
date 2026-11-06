@@ -1,0 +1,6 @@
+{
+  "name": "RokhNet Notice Pro",
+  "description": "Smart WordPress & WooCommerce Notice and Mandatory Agreement Popup Builder by Milad Riahi with live preview, customization, AI copy generation, and downloadable ZIP package.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
