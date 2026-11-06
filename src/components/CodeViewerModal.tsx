@@ -45,7 +45,7 @@ export const CodeViewerModal: React.FC<CodeViewerModalProps> = ({ config, isOpen
             </div>
             <div>
               <h2 className="text-base font-bold text-white">
-                سورس‌کد کامل افزونه وردپرس (rokhnet-notice-pro)
+                سورس‌کد کامل افزونه وردپرس (اطلاع رسانی پاپ آپ - popup-notice-pro v3.0)
               </h2>
               <p className="text-xs text-slate-400">
                 سازگار با وردپرس {config.wpVersion} · ووکامرس {config.wcVersion} · PHP {config.phpVersion} · توسعه‌دهنده: {config.developerName}

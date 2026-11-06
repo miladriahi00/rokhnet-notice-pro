@@ -1,9 +1,9 @@
 export type PopupStylePreset =
   | 'glassmorphism'
-  | 'luxury-dark'
   | 'corporate-minimal'
-  | 'cyber-neon'
+  | 'luxury-dark'
   | 'woo-checkout'
+  | 'cyber-neon'
   | 'emerald-light';
 
 export type PopupPosition =
@@ -23,13 +23,22 @@ export type DisplayTargetMode =
   | 'woo_all'
   | 'woo_shop_product'
   | 'woo_checkout_cart'
-  | 'custom_selection';
+  | 'advanced_rules'
+  | 'shortcode_only';
 
-export type StorageMethod =
-  | 'cookie_localstorage'
-  | 'session_only';
+export type SessionDisplayMode =
+  | 'every_session'
+  | 'cookie_days'
+  | 'every_pageload';
+
+export type TriggerType =
+  | 'immediate'
+  | 'delay_seconds'
+  | 'scroll_pixels'
+  | 'exit_intent';
 
 export interface StylePalette {
+  name?: string;
   primaryColor: string;
   buttonTextColor: string;
   accentColor: string;
@@ -49,34 +58,17 @@ export interface StylePresetInfo {
   tagline: string;
   isLight: boolean;
   palette: StylePalette;
+  recommendedHarmonies: StylePalette[];
 }
 
 export const STYLE_PRESETS: StylePresetInfo[] = [
   {
-    id: 'glassmorphism',
-    name: 'شیشه‌ای کریستالی تیره (Glassmorphism)',
-    tagline: 'پس‌زمینه بلورین سرمه‌ای با متن سفید درخشان و کنتراست عالی',
-    isLight: false,
-    palette: {
-      primaryColor: '#3b82f6',
-      buttonTextColor: '#ffffff',
-      accentColor: '#60a5fa',
-      backgroundColor: '#0f172a',
-      textColor: '#f8fafc',
-      subtitleColor: '#cbd5e1',
-      bodyBoxBg: '#1e293b',
-      bodyBoxText: '#f1f5f9',
-      bodyBoxBorder: '#334155',
-      checkboxBoxBg: '#172554',
-      checkboxBoxText: '#eff6ff',
-    },
-  },
-  {
     id: 'corporate-minimal',
     name: 'مینیمال روشن رسمی (Corporate Light)',
-    tagline: 'پوسته سفید، تمیز و رسمی با متون تیره بسیار خوانا ویژه قوانین و تعهدنامه‌ها',
+    tagline: 'پوسته سفید، تمیز و رسمی با متون تیره بسیار خوانا ویژه قوانین و اطلاعیه‌ها',
     isLight: true,
     palette: {
+      name: 'آبی کلاسیک رسمی (پیشنهادی ۱)',
       primaryColor: '#2563eb',
       buttonTextColor: '#ffffff',
       accentColor: '#1d4ed8',
@@ -89,6 +81,114 @@ export const STYLE_PRESETS: StylePresetInfo[] = [
       checkboxBoxBg: '#eff6ff',
       checkboxBoxText: '#0f172a',
     },
+    recommendedHarmonies: [
+      {
+        name: 'آبی کلاسیک رسمی',
+        primaryColor: '#2563eb',
+        buttonTextColor: '#ffffff',
+        accentColor: '#1d4ed8',
+        backgroundColor: '#ffffff',
+        textColor: '#0f172a',
+        subtitleColor: '#475569',
+        bodyBoxBg: '#f8fafc',
+        bodyBoxText: '#1e293b',
+        bodyBoxBorder: '#e2e8f0',
+        checkboxBoxBg: '#eff6ff',
+        checkboxBoxText: '#0f172a',
+      },
+      {
+        name: 'نیلی مدرن سازمانی',
+        primaryColor: '#4f46e5',
+        buttonTextColor: '#ffffff',
+        accentColor: '#4338ca',
+        backgroundColor: '#ffffff',
+        textColor: '#111827',
+        subtitleColor: '#4b5563',
+        bodyBoxBg: '#f5f3ff',
+        bodyBoxText: '#1f2937',
+        bodyBoxBorder: '#ddd6fe',
+        checkboxBoxBg: '#eef2ff',
+        checkboxBoxText: '#1e1b4b',
+      },
+      {
+        name: 'فیروزه‌ای اعتماد',
+        primaryColor: '#0891b2',
+        buttonTextColor: '#ffffff',
+        accentColor: '#0e7490',
+        backgroundColor: '#ffffff',
+        textColor: '#0f172a',
+        subtitleColor: '#475569',
+        bodyBoxBg: '#ecfeff',
+        bodyBoxText: '#164e63',
+        bodyBoxBorder: '#a5f3fc',
+        checkboxBoxBg: '#cffafe',
+        checkboxBoxText: '#083344',
+      },
+    ],
+  },
+  {
+    id: 'glassmorphism',
+    name: 'شیشه‌ای کریستالی تیره (Glassmorphism)',
+    tagline: 'پس‌زمینه بلورین سرمه‌ای با متن سفید درخشان و کنتراست عالی',
+    isLight: false,
+    palette: {
+      name: 'سرمه‌ای کهکشانی (پیشنهادی ۱)',
+      primaryColor: '#3b82f6',
+      buttonTextColor: '#ffffff',
+      accentColor: '#60a5fa',
+      backgroundColor: '#0f172a',
+      textColor: '#f8fafc',
+      subtitleColor: '#cbd5e1',
+      bodyBoxBg: '#1e293b',
+      bodyBoxText: '#f1f5f9',
+      bodyBoxBorder: '#334155',
+      checkboxBoxBg: '#172554',
+      checkboxBoxText: '#eff6ff',
+    },
+    recommendedHarmonies: [
+      {
+        name: 'سرمه‌ای کهکشانی',
+        primaryColor: '#3b82f6',
+        buttonTextColor: '#ffffff',
+        accentColor: '#60a5fa',
+        backgroundColor: '#0f172a',
+        textColor: '#f8fafc',
+        subtitleColor: '#cbd5e1',
+        bodyBoxBg: '#1e293b',
+        bodyBoxText: '#f1f5f9',
+        bodyBoxBorder: '#334155',
+        checkboxBoxBg: '#172554',
+        checkboxBoxText: '#eff6ff',
+      },
+      {
+        name: 'بنفش نئونی عمیق',
+        primaryColor: '#8b5cf6',
+        buttonTextColor: '#ffffff',
+        accentColor: '#a78bfa',
+        backgroundColor: '#13111c',
+        textColor: '#f5f3ff',
+        subtitleColor: '#ddd6fe',
+        bodyBoxBg: '#1e1b2e',
+        bodyBoxText: '#ede9fe',
+        bodyBoxBorder: '#3b3355',
+        checkboxBoxBg: '#2e1065',
+        checkboxBoxText: '#f3e8ff',
+      },
+      {
+        name: 'آبی اقیانوسی تیره',
+        primaryColor: '#06b6d4',
+        buttonTextColor: '#083344',
+        accentColor: '#22d3ee',
+        backgroundColor: '#081c24',
+        textColor: '#ecfeff',
+        subtitleColor: '#a5f3fc',
+        bodyBoxBg: '#0d2d3a',
+        bodyBoxText: '#cffafe',
+        bodyBoxBorder: '#155e75',
+        checkboxBoxBg: '#164e63',
+        checkboxBoxText: '#ecfeff',
+      },
+    ],
   },
   {
     id: 'luxury-dark',
@@ -96,6 +196,7 @@ export const STYLE_PRESETS: StylePresetInfo[] = [
     tagline: 'ترکیب مشکی سنگی و طلایی سلطنتی با متن دکمه تیره جهت خوانایی ۱۰۰٪',
     isLight: false,
     palette: {
+      name: 'طلایی سلطنتی (پیشنهادی ۱)',
       primaryColor: '#eab308',
       buttonTextColor: '#09090b',
       accentColor: '#facc15',
@@ -108,6 +209,50 @@ export const STYLE_PRESETS: StylePresetInfo[] = [
       checkboxBoxBg: '#272009',
       checkboxBoxText: '#fef9c3',
     },
+    recommendedHarmonies: [
+      {
+        name: 'طلایی سلطنتی',
+        primaryColor: '#eab308',
+        buttonTextColor: '#09090b',
+        accentColor: '#facc15',
+        backgroundColor: '#09090b',
+        textColor: '#fafafa',
+        subtitleColor: '#d4d4d8',
+        bodyBoxBg: '#18181b',
+        bodyBoxText: '#f4f4f5',
+        bodyBoxBorder: '#3f3f46',
+        checkboxBoxBg: '#272009',
+        checkboxBoxText: '#fef9c3',
+      },
+      {
+        name: 'رزگلد لوکس',
+        primaryColor: '#f43f5e',
+        buttonTextColor: '#ffffff',
+        accentColor: '#fb7185',
+        backgroundColor: '#120a0d',
+        textColor: '#fff1f2',
+        subtitleColor: '#fecdd3',
+        bodyBoxBg: '#211217',
+        bodyBoxText: '#ffe4e6',
+        bodyBoxBorder: '#4c1d24',
+        checkboxBoxBg: '#3b0a14',
+        checkboxBoxText: '#ffe4e6',
+      },
+      {
+        name: 'برنز کهربایی',
+        primaryColor: '#f59e0b',
+        buttonTextColor: '#09090b',
+        accentColor: '#fbbf24',
+        backgroundColor: '#0c0a09',
+        textColor: '#fafaf9',
+        subtitleColor: '#d6d3d1',
+        bodyBoxBg: '#1c1917',
+        bodyBoxText: '#f5f5f4',
+        bodyBoxBorder: '#44403c',
+        checkboxBoxBg: '#292524',
+        checkboxBoxText: '#fef3c7',
+      },
+    ],
   },
   {
     id: 'woo-checkout',
@@ -115,6 +260,7 @@ export const STYLE_PRESETS: StylePresetInfo[] = [
     tagline: 'هماهنگ با برگه‌های محصول و تسویه‌حساب ووکامرس با خوانایی بالا',
     isLight: true,
     palette: {
+      name: 'بنفش استاندارد ووکامرس',
       primaryColor: '#7c3aed',
       buttonTextColor: '#ffffff',
       accentColor: '#6d28d9',
@@ -127,6 +273,50 @@ export const STYLE_PRESETS: StylePresetInfo[] = [
       checkboxBoxBg: '#ede9fe',
       checkboxBoxText: '#1e1b4b',
     },
+    recommendedHarmonies: [
+      {
+        name: 'بنفش استاندارد ووکامرس',
+        primaryColor: '#7c3aed',
+        buttonTextColor: '#ffffff',
+        accentColor: '#6d28d9',
+        backgroundColor: '#ffffff',
+        textColor: '#111827',
+        subtitleColor: '#4b5563',
+        bodyBoxBg: '#f5f3ff',
+        bodyBoxText: '#1f2937',
+        bodyBoxBorder: '#ddd6fe',
+        checkboxBoxBg: '#ede9fe',
+        checkboxBoxText: '#1e1b4b',
+      },
+      {
+        name: 'قرمز فروش ویژه',
+        primaryColor: '#e11d48',
+        buttonTextColor: '#ffffff',
+        accentColor: '#be123c',
+        backgroundColor: '#ffffff',
+        textColor: '#111827',
+        subtitleColor: '#4b5563',
+        bodyBoxBg: '#fff1f2',
+        bodyBoxText: '#1f2937',
+        bodyBoxBorder: '#fecdd3',
+        checkboxBoxBg: '#ffe4e6',
+        checkboxBoxText: '#881337',
+      },
+      {
+        name: 'نارنجی دیجی‌استایل',
+        primaryColor: '#ea580c',
+        buttonTextColor: '#ffffff',
+        accentColor: '#c2410c',
+        backgroundColor: '#ffffff',
+        textColor: '#0f172a',
+        subtitleColor: '#475569',
+        bodyBoxBg: '#fff7ed',
+        bodyBoxText: '#1e293b',
+        bodyBoxBorder: '#fed7aa',
+        checkboxBoxBg: '#ffedd5',
+        checkboxBoxText: '#431407',
+      },
+    ],
   },
   {
     id: 'cyber-neon',
@@ -134,6 +324,7 @@ export const STYLE_PRESETS: StylePresetInfo[] = [
     tagline: 'کنتراست بالا با حاشیه سبز نئونی ویژه اطلاعیه‌های فنی و فوری',
     isLight: false,
     palette: {
+      name: 'زمردی سایبری',
       primaryColor: '#10b981',
       buttonTextColor: '#022c22',
       accentColor: '#34d399',
@@ -146,6 +337,36 @@ export const STYLE_PRESETS: StylePresetInfo[] = [
       checkboxBoxBg: '#063229',
       checkboxBoxText: '#d1fae5',
     },
+    recommendedHarmonies: [
+      {
+        name: 'زمردی سایبری',
+        primaryColor: '#10b981',
+        buttonTextColor: '#022c22',
+        accentColor: '#34d399',
+        backgroundColor: '#041318',
+        textColor: '#ecfdf5',
+        subtitleColor: '#a7f3d0',
+        bodyBoxBg: '#062229',
+        bodyBoxText: '#e2f8f0',
+        bodyBoxBorder: '#0f4c5c',
+        checkboxBoxBg: '#063229',
+        checkboxBoxText: '#d1fae5',
+      },
+      {
+        name: 'زرد هشدار فوری',
+        primaryColor: '#facc15',
+        buttonTextColor: '#09090b',
+        accentColor: '#fde047',
+        backgroundColor: '#141204',
+        textColor: '#fefce8',
+        subtitleColor: '#fef08a',
+        bodyBoxBg: '#262107',
+        bodyBoxText: '#fef9c3',
+        bodyBoxBorder: '#713f12',
+        checkboxBoxBg: '#3f3409',
+        checkboxBoxText: '#fefce8',
+      },
+    ],
   },
   {
     id: 'emerald-light',
@@ -153,6 +374,7 @@ export const STYLE_PRESETS: StylePresetInfo[] = [
     tagline: 'زمینه سفید با هایلایت سبز اعتمادبخش و خوانایی فوق‌العاده در موبایل و دسکتاپ',
     isLight: true,
     palette: {
+      name: 'سبز نعنایی روشن',
       primaryColor: '#059669',
       buttonTextColor: '#ffffff',
       accentColor: '#047857',
@@ -165,6 +387,36 @@ export const STYLE_PRESETS: StylePresetInfo[] = [
       checkboxBoxBg: '#ecfdf5',
       checkboxBoxText: '#064e3b',
     },
+    recommendedHarmonies: [
+      {
+        name: 'سبز نعنایی روشن',
+        primaryColor: '#059669',
+        buttonTextColor: '#ffffff',
+        accentColor: '#047857',
+        backgroundColor: '#ffffff',
+        textColor: '#064e3b',
+        subtitleColor: '#374151',
+        bodyBoxBg: '#f0fdf4',
+        bodyBoxText: '#111827',
+        bodyBoxBorder: '#bbf7d0',
+        checkboxBoxBg: '#ecfdf5',
+        checkboxBoxText: '#064e3b',
+      },
+      {
+        name: 'سبز زیتونی رسمی',
+        primaryColor: '#16a34a',
+        buttonTextColor: '#ffffff',
+        accentColor: '#15803d',
+        backgroundColor: '#ffffff',
+        textColor: '#14532d',
+        subtitleColor: '#374151',
+        bodyBoxBg: '#f7fee7',
+        bodyBoxText: '#1e293b',
+        bodyBoxBorder: '#d9f99d',
+        checkboxBoxBg: '#ecfccb',
+        checkboxBoxText: '#14532d',
+      },
+    ],
   },
 ];
 
@@ -224,8 +476,21 @@ export interface NoticeItem {
   preventEscapeKey: boolean;
   hideCloseButton: boolean;
 
-  // Page Targeting & Conditional Loading (Zero-Speed Impact)
+  // Advanced Targeting (Post Types, Taxonomies, Woo, URLs, Shortcode)
   displayTarget: DisplayTargetMode;
+  targetPostTypes: {
+    post: boolean;
+    page: boolean;
+    product: boolean;
+    customPostTypes: string;
+  };
+  targetTaxonomies: {
+    category: boolean;
+    postTag: boolean;
+    productCat: boolean;
+    productTag: boolean;
+    specificTerms: string;
+  };
   targetWooPages: {
     shop: boolean;
     product: boolean;
@@ -238,16 +503,17 @@ export interface NoticeItem {
   excludePageIdsOrUrls: string;
   targetUserRoles: 'all' | 'guests_only' | 'logged_in_only';
 
-  // Trigger & Lightweight Browser Persistence (Zero DB Bloat)
-  triggerType: 'immediate' | 'delay' | 'scroll' | 'exit_intent';
+  // Trigger Timing & Scroll Pixels + Session Control
+  triggerType: TriggerType;
   delaySeconds: number;
-  scrollPercentage: number;
-  storageMethod: StorageMethod;
+  scrollPixels: number;
+  sessionMode: SessionDisplayMode;
   cookieExpireDays: number;
 }
 
 export interface PluginConfig {
   pluginVersion: string;
+  adminMenuTitle: string;
   developerName: string;
   developerPhone: string;
   developerUrl: string;
@@ -264,7 +530,7 @@ export const DEFAULT_NOTICES: NoticeItem[] = [
     internalName: 'تعهدنامه عمومی قوانین سایت',
     enabled: true,
     priority: 1,
-    noticeVersion: '2.0.1',
+    noticeVersion: '3.0.1',
     showIcon: true,
     iconType: 'shield',
     showBadge: true,
@@ -273,7 +539,7 @@ export const DEFAULT_NOTICES: NoticeItem[] = [
     title: 'بروزرسانی قوانین و شرایط استفاده از خدمات وبسایت',
     showSubtitle: true,
     subtitle: 'لطفاً پیش از ادامه فعالیت در سایت، موارد زیر را به دقت مطالعه و تایید فرمایید',
-    contentHtml: `<p>کاربر گرامی، ضمن خوش‌آمدگویی به وبسایت <strong>رخ‌نت (RokhNet)</strong>، جهت ارتقای کیفیت خدمات و امنیت کاربری، قوانین زیر لازم‌الاجرا می‌باشد:</p>
+    contentHtml: `<p>کاربر گرامی، جهت ارتقای کیفیت خدمات و امنیت کاربری، قوانین زیر لازم‌الاجرا می‌باشد:</p>
 <ul>
   <li>تمامی خدمات و محصولات ارائه شده در سایت تابع قوانین تجارت الکترونیک می‌باشد.</li>
   <li>مسئولیت حفظ اطلاعات حساب کاربری و صحت اطلاعات ثبت شده بر عهده کاربر محترم است.</li>
@@ -295,13 +561,26 @@ export const DEFAULT_NOTICES: NoticeItem[] = [
     borderRadiusPx: 20,
     backdropBlurPx: 10,
     overlayOpacity: 70,
-    ...STYLE_PRESETS[1].palette,
+    ...STYLE_PRESETS[0].palette,
     customCss: '',
     countdownSeconds: 0,
     preventCloseOnBackdrop: true,
     preventEscapeKey: true,
     hideCloseButton: true,
     displayTarget: 'all_pages',
+    targetPostTypes: {
+      post: true,
+      page: true,
+      product: true,
+      customPostTypes: '',
+    },
+    targetTaxonomies: {
+      category: true,
+      postTag: false,
+      productCat: true,
+      productTag: false,
+      specificTerms: '',
+    },
     targetWooPages: {
       shop: true,
       product: true,
@@ -313,10 +592,10 @@ export const DEFAULT_NOTICES: NoticeItem[] = [
     includePageIdsOrUrls: '',
     excludePageIdsOrUrls: '/wp-login.php',
     targetUserRoles: 'all',
-    triggerType: 'immediate',
-    delaySeconds: 1,
-    scrollPercentage: 25,
-    storageMethod: 'cookie_localstorage',
+    triggerType: 'delay_seconds',
+    delaySeconds: 3,
+    scrollPixels: 300,
+    sessionMode: 'every_session',
     cookieExpireDays: 30,
   },
   {
@@ -324,7 +603,7 @@ export const DEFAULT_NOTICES: NoticeItem[] = [
     internalName: 'تاییدیه شرایط ارسال در تسویه‌حساب ووکامرس',
     enabled: true,
     priority: 2,
-    noticeVersion: '2.0.1',
+    noticeVersion: '3.0.1',
     showIcon: true,
     iconType: 'cart',
     showBadge: true,
@@ -347,7 +626,7 @@ export const DEFAULT_NOTICES: NoticeItem[] = [
     secondaryButtonText: 'راهنمای ارسال',
     secondaryButtonUrl: 'https://rokhnet.com/shipping',
     bannerImageUrl: '',
-    stylePreset: 'glassmorphism',
+    stylePreset: 'woo-checkout',
     inheritThemeFont: true,
     position: 'center',
     animation: 'zoom-bounce',
@@ -355,13 +634,26 @@ export const DEFAULT_NOTICES: NoticeItem[] = [
     borderRadiusPx: 20,
     backdropBlurPx: 14,
     overlayOpacity: 75,
-    ...STYLE_PRESETS[0].palette,
+    ...STYLE_PRESETS[3].palette,
     customCss: '',
     countdownSeconds: 0,
     preventCloseOnBackdrop: true,
     preventEscapeKey: true,
     hideCloseButton: true,
     displayTarget: 'woo_checkout_cart',
+    targetPostTypes: {
+      post: false,
+      page: false,
+      product: true,
+      customPostTypes: '',
+    },
+    targetTaxonomies: {
+      category: false,
+      postTag: false,
+      productCat: false,
+      productTag: false,
+      specificTerms: '',
+    },
     targetWooPages: {
       shop: false,
       product: false,
@@ -374,15 +666,16 @@ export const DEFAULT_NOTICES: NoticeItem[] = [
     excludePageIdsOrUrls: '',
     targetUserRoles: 'all',
     triggerType: 'immediate',
-    delaySeconds: 1,
-    scrollPercentage: 20,
-    storageMethod: 'cookie_localstorage',
+    delaySeconds: 2,
+    scrollPixels: 300,
+    sessionMode: 'cookie_days',
     cookieExpireDays: 7,
   },
 ];
 
 export const DEFAULT_PLUGIN_CONFIG: PluginConfig = {
-  pluginVersion: '2.0.0',
+  pluginVersion: '3.0.0',
+  adminMenuTitle: 'اطلاع رسانی پاپ آپ',
   developerName: 'میلاد ریاحی',
   developerPhone: '09133062388',
   developerUrl: 'https://rokhnet.com',
@@ -434,7 +727,7 @@ export const QUICK_CONTENT_TEMPLATES: QuickContentTemplate[] = [
     subtitle: 'مطالعه این اطلاعیه برای کلیه کاربران سایت الزامی می‌باشد',
     contentHtml: `<p>کاربر گرامی، استفاده از خدمات این وبسایت به منزله پذیرش کامل شرایط زیر است:</p>
 <ul>
-  <li>کلیه حقوق مادی و معنوی محتوا متعلق به وبسایت رخ‌نت می‌باشد.</li>
+  <li>کلیه حقوق مادی و معنوی محتوا متعلق به این وبسایت می‌باشد.</li>
   <li>هرگونه کپی‌برداری یا انتشار غیرمجاز پیگرد قانونی دارد.</li>
 </ul>`,
     checkboxLabel: 'متن اطلاعیه رسمی را خواندم و متوجه شدم.',
@@ -449,8 +742,8 @@ export const QUICK_CONTENT_TEMPLATES: QuickContentTemplate[] = [
     badgeText: 'اطلاعیه ویژه باشگاه مشتریان',
     title: 'شرایط جدید خدمات اختصاصی و پشتیبانی VIP',
     subtitle: 'ارتقای سطح خدمات پشتیبانی برای اعضای ویژه سایت',
-    contentHtml: `<p>همراهان گرامی <strong>رخ‌نت</strong>، سرویس‌های ویژه پشتیبانی و تحویل فوری برای حساب‌های کاربری فعال گردید.</p>
-<p>جهت هماهنگی مستقیم می‌توانید با شماره <strong>09133062388</strong> در ارتباط باشید.</p>`,
+    contentHtml: `<p>همراهان گرامی، سرویس‌های ویژه پشتیبانی و تحویل فوری برای حساب‌های کاربری فعال گردید.</p>
+<p>جهت هماهنگی مستقیم می‌توانید با واحد پشتیبانی در ارتباط باشید.</p>`,
     checkboxLabel: 'متن اطلاعیه ویژه را خواندم و متوجه شدم.',
     acceptButtonText: 'متوجه شدم، ادامه',
     iconType: 'sparkles',
@@ -477,13 +770,13 @@ export const QUICK_CONTENT_TEMPLATES: QuickContentTemplate[] = [
 ];
 
 export function createNewNoticeItem(index: number): NoticeItem {
-  const defaultPreset = STYLE_PRESETS[1]; // corporate-minimal (high-contrast light)
+  const defaultPreset = STYLE_PRESETS[0]; // corporate-minimal
   return {
     id: `notice-${Date.now()}`,
     internalName: `اطلاعیه شماره ${index}`,
     enabled: true,
     priority: index,
-    noticeVersion: '2.0.0',
+    noticeVersion: '3.0.0',
     showIcon: true,
     iconType: 'bell',
     showBadge: true,
@@ -492,14 +785,14 @@ export function createNewNoticeItem(index: number): NoticeItem {
     title: 'عنوان اطلاعیه جدید را وارد کنید',
     showSubtitle: true,
     subtitle: 'توضیح کوتاه زیرعنوان که در صورت تمایل قابل غیرفعال‌سازی است',
-    contentHtml: `<p>متن اطلاعیه جدید خود را در این بخش بنویسید. شما می‌توانید برای این پاپ‌آپ استایل، رنگ‌بندی و صفحات نمایش کاملاً مجزا تعریف کنید.</p>`,
+    contentHtml: `<p>متن اطلاعیه جدید خود را در این بخش بنویسید. شما می‌توانید برای این پاپ‌آپ استایل، رنگ‌بندی، زمان نمایش (مثلاً بعد از ۳ ثانیه یا ۳۰۰ پیکسل اسکرول) و پست‌تایپ یا تکسونومی مجزا تعریف کنید.</p>`,
     requireCheckbox: true,
     checkboxLabel: 'متن اطلاعیه را خواندم و متوجه شدم.',
     checkboxRequiredError: 'لطفاً ابتدا تیک «متن اطلاعیه را خواندم و متوجه شدم» را بزنید.',
     acceptButtonText: 'تایید و ادامه',
     secondaryButtonEnabled: false,
     secondaryButtonText: 'اطلاعات بیشتر',
-    secondaryButtonUrl: 'https://rokhnet.com',
+    secondaryButtonUrl: '',
     bannerImageUrl: '',
     stylePreset: defaultPreset.id,
     inheritThemeFont: true,
@@ -515,7 +808,20 @@ export function createNewNoticeItem(index: number): NoticeItem {
     preventCloseOnBackdrop: true,
     preventEscapeKey: true,
     hideCloseButton: true,
-    displayTarget: 'custom_selection',
+    displayTarget: 'advanced_rules',
+    targetPostTypes: {
+      post: true,
+      page: true,
+      product: false,
+      customPostTypes: '',
+    },
+    targetTaxonomies: {
+      category: false,
+      postTag: false,
+      productCat: false,
+      productTag: false,
+      specificTerms: '',
+    },
     targetWooPages: {
       shop: false,
       product: false,
@@ -524,13 +830,13 @@ export function createNewNoticeItem(index: number): NoticeItem {
       checkout: false,
       account: false,
     },
-    includePageIdsOrUrls: '/sample-page',
+    includePageIdsOrUrls: '',
     excludePageIdsOrUrls: '',
     targetUserRoles: 'all',
-    triggerType: 'immediate',
-    delaySeconds: 1,
-    scrollPercentage: 25,
-    storageMethod: 'cookie_localstorage',
+    triggerType: 'delay_seconds',
+    delaySeconds: 3,
+    scrollPixels: 300,
+    sessionMode: 'every_session',
     cookieExpireDays: 30,
   };
 }

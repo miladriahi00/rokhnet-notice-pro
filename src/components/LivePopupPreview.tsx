@@ -17,6 +17,8 @@ import {
   Globe,
   Zap,
   Layers,
+  Clock,
+  MousePointerClick,
 } from 'lucide-react';
 import { PluginConfig, NoticeItem } from '../types/plugin';
 
@@ -41,7 +43,6 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
   const [remainingSeconds, setRemainingSeconds] = useState<number>(activeNotice.countdownSeconds);
   const [acceptedIds, setAcceptedIds] = useState<string[]>([]);
 
-  // Check if a notice matches the current simulated page
   const doesNoticeMatchPage = (n: NoticeItem, page: 'home' | 'product' | 'checkout'): boolean => {
     if (!n.enabled) return false;
     if (n.displayTarget === 'all_pages') return true;
@@ -49,23 +50,22 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
     if (n.displayTarget === 'woo_all') return page === 'product' || page === 'checkout';
     if (n.displayTarget === 'woo_shop_product') return page === 'product';
     if (n.displayTarget === 'woo_checkout_cart') return page === 'checkout';
-    if (n.displayTarget === 'custom_selection') {
-      if (page === 'product' && (n.targetWooPages.shop || n.targetWooPages.product)) return true;
+    if (n.displayTarget === 'advanced_rules') {
+      if (page === 'product' && (n.targetPostTypes.product || n.targetTaxonomies.productCat || n.targetWooPages.product)) return true;
       if (page === 'checkout' && (n.targetWooPages.cart || n.targetWooPages.checkout)) return true;
-      if (page === 'home' && n.includePageIdsOrUrls.includes('/')) return true;
+      if (page === 'home' && (n.targetPostTypes.page || n.targetPostTypes.post)) return true;
       return false;
     }
+    if (n.displayTarget === 'shortcode_only') return true;
     return true;
   };
 
-  // Matched notices sorted by priority
   const matchedQueue = config.notices
     .filter((n) => doesNoticeMatchPage(n, simulatedPage))
     .sort((a, b) => a.priority - b.priority);
 
   const pendingInQueue = matchedQueue.filter((n) => !acceptedIds.includes(n.id));
 
-  // Determine which notice is currently rendered in the modal
   const displayedNotice: NoticeItem | null =
     previewMode === 'single'
       ? activeNotice
@@ -228,7 +228,6 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
     <div className="flex flex-col h-full bg-[#0b101d] border border-slate-800/90 rounded-2xl overflow-hidden shadow-2xl">
       {/* Top Preview Control Bar */}
       <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 py-3 bg-[#111827] border-b border-slate-800">
-        {/* Mode Switcher: Single Editing vs Priority Queue */}
         <div className="flex items-center gap-1 p-1 bg-slate-900 rounded-xl border border-slate-800">
           <button
             type="button"
@@ -242,7 +241,7 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <span>پیش‌نمایش پاپ‌آپ در حال ویرایش</span>
+            <span>پیش‌نمایش پاپ‌آپ انتخابی</span>
           </button>
           <button
             type="button"
@@ -258,7 +257,7 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>تست نوبت و اولویت در صفحات ({matchedQueue.length})</span>
+            <span>تست صف اولویت ({matchedQueue.length})</span>
           </button>
         </div>
 
@@ -278,7 +277,7 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
             }`}
           >
             <Globe className="w-3.5 h-3.5" />
-            <span>صفحه اصلی</span>
+            <span>برگه / نوشته</span>
           </button>
           <button
             type="button"
@@ -294,7 +293,7 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
             }`}
           >
             <Store className="w-3.5 h-3.5" />
-            <span>محصول ووکامرس</span>
+            <span>پست‌تایپ محصول</span>
           </button>
           <button
             type="button"
@@ -345,38 +344,41 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>ریست و نمایش مجدد</span>
+            <span>ریست نمایش</span>
           </button>
         </div>
       </div>
 
-      {/* Conditional Asset Loading Status Bar */}
+      {/* Trigger & Session Status Strip */}
       <div className="px-4 py-2 bg-[#0d1424] border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div className="flex items-center gap-2">
-          <Zap className="w-3.5 h-3.5 text-emerald-400" />
-          <span className="text-slate-300">
-            وضعیت لود شرطی در صفحه «
-            {simulatedPage === 'home'
-              ? 'صفحه اصلی'
-              : simulatedPage === 'product'
-              ? 'فروشگاه و محصول'
-              : 'تسویه‌حساب ووکامرس'}
-            »:
+        <div className="flex flex-wrap items-center gap-3 text-slate-300">
+          <span className="inline-flex items-center gap-1 text-emerald-400 font-bold">
+            <Zap className="w-3.5 h-3.5" />
+            <span>
+              {activeNotice.sessionMode === 'every_session'
+                ? 'نمایش در هر سشن (Session)'
+                : activeNotice.sessionMode === 'every_pageload'
+                ? 'نمایش در هر بار لود'
+                : `کوکی (${activeNotice.cookieExpireDays} روز)`}
+            </span>
           </span>
-          {matchedQueue.length > 0 ? (
-            <span className="text-emerald-400 font-bold">
-              {matchedQueue.length} پاپ‌آپ منطبق (اسکریپت لود شد · فونت ارث‌بری از قالب)
+          <span aria-hidden="true">·</span>
+          <span className="inline-flex items-center gap-1 text-blue-400 font-bold">
+            <Clock className="w-3.5 h-3.5" />
+            <span>
+              {activeNotice.triggerType === 'delay_seconds'
+                ? `نمایش بعد از ${activeNotice.delaySeconds} ثانیه`
+                : activeNotice.triggerType === 'scroll_pixels'
+                ? `نمایش بعد از ${activeNotice.scrollPixels} پیکسل اسکرول`
+                : activeNotice.triggerType === 'exit_intent'
+                ? 'هنگام قصد خروج'
+                : 'نمایش فوری'}
             </span>
-          ) : (
-            <span className="text-amber-300 font-bold">
-              بدون پاپ‌آپ فعال در این صفحه (حجم فایل لود شده: ۰ کیلوبایت - بدون افت سرعت!)
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <span className="text-slate-400">در حال ویرایش:</span>
-          <span className="font-bold text-blue-400">{activeNotice.internalName}</span>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span className="inline-flex items-center gap-1 text-slate-400 font-mono text-[11px]" dir="ltr">
+            [popup_notice id="{activeNotice.id}"]
+          </span>
         </div>
       </div>
 
@@ -396,12 +398,12 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
                 {simulatedPage === 'checkout'
                   ? '/checkout/'
                   : simulatedPage === 'product'
-                  ? '/product/rokhnet-pro/'
+                  ? '/product/sample-item/'
                   : '/'}
               </span>
             </div>
             <div className="text-[11px] text-slate-500">
-              قالب وردپرس ۷.۱ · فونت قالب فعال
+              ارث‌بری فونت از قالب وردپرس
             </div>
           </div>
 
@@ -410,16 +412,18 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
             <div className="flex items-center justify-between pb-4 border-b border-slate-800">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center font-bold text-blue-400">
-                  RN
+                  WP
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-slate-200">وبسایت و فروشگاه رخ‌نت (RokhNet)</div>
+                  <div className="text-sm font-bold text-slate-200">
+                    محیط شبیه‌سازی سایت وردپرس ({config.adminMenuTitle})
+                  </div>
                   <div className="text-xs text-slate-500">
-                    توسعه‌دهنده: {config.developerName} · {config.developerPhone}
+                    تست زنده سرتیتر، رنگ‌های پیشنهادی، سشن و زمان نمایش
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-1.5">
                 {config.notices.map((n) => (
                   <button
                     key={n.id}
@@ -442,27 +446,32 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
             </div>
 
             <div className="p-5 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-2">
-              <div className="text-sm font-bold text-slate-200">
-                {simulatedPage === 'checkout'
-                  ? 'برگه تسویه‌حساب ووکامرس ۱۱.۱ (Checkout)'
-                  : simulatedPage === 'product'
-                  ? 'برگه محصول و فروشگاه ووکامرس'
-                  : 'صفحه اصلی سایت وردپرس ۷.۱'}
+              <div className="text-sm font-bold text-slate-200 flex items-center gap-2">
+                <MousePointerClick className="w-4 h-4 text-blue-400" />
+                <span>فراخوانی هوشمند بر اساس پست‌تایپ، تکسونومی یا شورت‌کد</span>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed">
-                در نسخه ۲.۰، وضعیت تایید هر پاپ‌آپ بدون ایجاد هیچ بار اضافی روی دیتابیس، مستقیماً در کوکی و حافظه مرورگر کاربر ذخیره می‌شود و فایل‌های افزونه تنها در صفحات هدف لود می‌گردند.
+                این اطلاعیه را می‌توانید علاوه بر شرط‌های خودکار (پست‌تایپ، دسته‌بندی، برچسب و آدرس)، با شورت‌کد{' '}
+                <code dir="ltr" className="text-blue-300 bg-slate-900 px-1.5 py-0.5 rounded">
+                  [popup_notice id="{activeNotice.id}"]
+                </code>{' '}
+                در هر برگه، ابزارک یا قالب دلخواه فراخوانی نمایید.
               </p>
               {acceptedIds.length > 0 && (
                 <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-emerald-400">
                   <span>
-                    ✓ تعداد {acceptedIds.length} پاپ‌آپ توسط کاربر تیک زده شد و در کوکی مرورگر ذخیره گردید.
+                    ✓ وضعیت تایید در{' '}
+                    {activeNotice.sessionMode === 'every_session'
+                      ? 'سشن فعلی مرورگر (SessionStorage)'
+                      : 'کوکی مرورگر'}{' '}
+                    ذخیره شد.
                   </span>
                   <button
                     type="button"
                     onClick={handleResetSimulation}
                     className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold cursor-pointer"
                   >
-                    پاک کردن کوکی تست و نمایش مجدد
+                    نمایش مجدد پاپ‌آپ
                   </button>
                 </div>
               )}
@@ -488,7 +497,6 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
                   isShaking ? 'animate-shake' : ''
                 }`}
               >
-                {/* Close Button */}
                 {!displayedNotice.hideCloseButton && (
                   <button
                     type="button"
@@ -504,7 +512,6 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
                   </button>
                 )}
 
-                {/* Optional Top Banner */}
                 {displayedNotice.bannerImageUrl && (
                   <div className="-mx-7 -mt-7 mb-5 max-h-44 overflow-hidden border-b border-slate-500/20">
                     <img
@@ -515,7 +522,6 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
                   </div>
                 )}
 
-                {/* Dynamic Header with Independent Element Toggles */}
                 {showAnyHeader && (
                   <div className="flex items-start gap-3.5 mb-4">
                     {displayedNotice.showIcon && (
@@ -558,7 +564,6 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
                   </div>
                 )}
 
-                {/* Scrollable Body Box with Contrast-Safe Palette */}
                 <div
                   className="max-h-48 overflow-y-auto rounded-xl p-4 mb-4 text-xs md:text-sm leading-7"
                   style={{
@@ -569,11 +574,10 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
                   dangerouslySetInnerHTML={{ __html: displayedNotice.contentHtml }}
                 />
 
-                {/* Mandatory Agreement Checkbox with Contrast-Safe Palette */}
                 {displayedNotice.requireCheckbox && (
                   <div className="mb-4">
                     <label
-                      htmlFor="live-agree-checkbox-v2"
+                      htmlFor="live-agree-checkbox-v3"
                       className="flex items-start gap-3 p-3.5 rounded-xl cursor-pointer select-none transition-all"
                       style={{
                         backgroundColor: displayedNotice.checkboxBoxBg,
@@ -586,7 +590,7 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
                       }}
                     >
                       <input
-                        id="live-agree-checkbox-v2"
+                        id="live-agree-checkbox-v3"
                         type="checkbox"
                         checked={isChecked}
                         onChange={(e) => {
@@ -613,7 +617,6 @@ export const LivePopupPreview: React.FC<LivePopupPreviewProps> = ({
                   </div>
                 )}
 
-                {/* Action Buttons */}
                 <div className="flex flex-wrap items-center gap-2.5">
                   <button
                     type="button"
